@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-final List<Map<String, String>> products = [
+List<Map<String, String>> products = [
   {
     "product": "One",
     "company": "MediaQart",
@@ -45,7 +45,6 @@ final List<Map<String, String>> products = [
         "https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80"
   },
 ];
-
 void main() {
   return runApp(MyApp());
 }
@@ -69,13 +68,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int addedPrice;
   int _current = 0;
   List<Widget> imageSliders;
 
   @override
   void initState() {
     super.initState();
-    products.forEach((e) => print(e["product"]));
     imageSliders = products
         .map(
           (product) => Container(
@@ -88,12 +87,168 @@ class _HomeState extends State<Home> {
           ),
         )
         .toList();
+    addedPrice = int.parse(products[_current]["price"]);
+  }
+
+  buildRatingCostSection({Size size, int price}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Flexible(
+          child: Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.star,
+                  size: 20,
+                  color: Colors.green,
+                ),
+                onPressed: () {},
+              ),
+              Text('Rating '),
+              Text('| '),
+              Text(
+                'xx reviews',
+                style: TextStyle(
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Flexible(
+          child: Row(
+            children: [
+              ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                      Colors.white,
+                    ),
+                    padding: MaterialStateProperty.all(
+                      EdgeInsets.zero,
+                    ),
+                    shape: MaterialStateProperty.all(
+                      CircleBorder(),
+                    )),
+                child: Icon(
+                  Icons.favorite,
+                  size: 20,
+                  color: Colors.green,
+                ),
+                onPressed: () {},
+              ),
+              Text('INR '),
+              Text(
+                price.toString(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  buildAddToCardSection() {
+    return Container(
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  if ((addedPrice - 10) > 0) {
+                    addedPrice -= 10;
+                    setState(() {});
+                  }
+                },
+                child: RotatedBox(
+                  quarterTurns: 1,
+                  child: Transform.scale(
+                    scale: 1.5,
+                    child: Text(
+                      '|',
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Colors.redAccent,
+                  ),
+                ),
+                onPressed: () {},
+                child: Text(
+                  'Add to Cart',
+                ),
+              ),
+              SizedBox(
+                width: 10.0,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  size: 25,
+                ),
+                onPressed: () {
+                  addedPrice = addedPrice + 10;
+                  setState(() {});
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  buildDetailSection() {
+    return Container(
+      margin: EdgeInsets.only(
+        left: 75.0,
+        right: 75.0,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            alignment: Alignment.topLeft,
+            child: Text(
+              'Details',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: Colors.redAccent,
+                fontSize: 15.0,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+          Text(
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ',
+            softWrap: true,
+            style: TextStyle(),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
@@ -113,6 +268,8 @@ class _HomeState extends State<Home> {
                             onPageChanged: (index, reason) {
                               setState(() {
                                 _current = index;
+                                addedPrice =
+                                    int.parse(products[_current]["price"]);
                               });
                             }),
                       ),
@@ -139,8 +296,72 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(
                   height: constraints.maxHeight * 0.6,
-                  child: Placeholder(
-                    color: Colors.amber,
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            width: 2.0,
+                            color: Colors.grey[900],
+                          ),
+                          borderRadius: BorderRadius.circular(
+                            10.0,
+                          ),
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 12.0,
+                          vertical: 10.0,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            top: 20.0,
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              buildRatingCostSection(
+                                size: size,
+                                price: addedPrice,
+                              ),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              buildAddToCardSection(),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              buildDetailSection(),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 50.0,
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                products[_current]["product"],
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Company',
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
                 ),
               ],
